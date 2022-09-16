@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type Profile struct {
 	Name           string
@@ -17,93 +15,98 @@ type ProfilePicture struct {
 	ImagePath string
 }
 
-// function to complete the profile and return as struct
-func completeProfile(p Profile) Profile {
-	return p
-}
-
-// method to take profile and modify it by taking modifications as arguments
-func (p Profile) updateProfile(modifications int) Profile {
-	//writing switch case for modifications
-	switch modifications {
-
-	case 1:
-		fmt.Printf("Please enter the new name to be modified:")
-		var name string
-		fmt.Scanln(name)
-		p.Name = name
-		return p
-	case 2:
-		fmt.Println("Please enter the new username to be modified:")
-		var username string
-		fmt.Scan(&username)
-		p.Username = username
-		return p
-	case 3:
-		fmt.Println("Please enter the new designation to be modified:")
-		var designation string
-		fmt.Scan(&designation)
-		p.Designation = designation
-		return p
-	case 4:
-		fmt.Println("Enter new contact number to be modified:")
-		var contact string
-		fmt.Scan(&contact)
-		p.ContactNumber = contact
-		return p
-	case 5:
-		fmt.Println("Press 1 to make changes in image name\nPress 2 to make changes in image path\nPress 3 to make changes in both image name and image path: ")
-		var profile_changes int
-		fmt.Scan(&profile_changes)
-		if profile_changes == 1 {
-			fmt.Println("Enter the new image name:")
-			var image_name string
-			fmt.Scan(&image_name)
-			p.ProfilePicture.ImageName = image_name
-			return p
-		}
-		if profile_changes == 2 {
-			fmt.Println("Enter the new image path:")
-			var image_path string
-			fmt.Scan(&image_path)
-			p.ProfilePicture.ImagePath = image_path
-			return p
-		}
-		if profile_changes == 3 {
-			var image_name, image_path string
-			fmt.Println("Enter the new image name:")
-			fmt.Scan(&image_name)
-			fmt.Println("Enter the new image path:")
-			fmt.Scan(&image_path)
-			p.ProfilePicture.ImageName = image_name
-			p.ProfilePicture.ImagePath = image_path
-			return p
-		}
-
-	}
-	//returning profile
-	return p
-}
-
-func main() {
-	p := Profile{
-		Name:          "Kartik",
-		Username:      "kartikgarg",
-		Designation:   "software engineer",
-		ContactNumber: "12345",
+func completeProfile(name, userName, designation, contactNumber, imageName, imagePath string) *Profile {
+	//using pointer return type so the changes do not remain local to this specific function, pointers pass the actual address of the type rather than making a copy of it
+	return &Profile{
+		Name:          name,
+		Username:      userName,
+		Designation:   designation,
+		ContactNumber: contactNumber,
 		ProfilePicture: ProfilePicture{
-			ImageName: "pic 1",
-			ImagePath: "/src/go/task1",
+			ImageName: imageName,
+			ImagePath: imagePath,
 		},
 	}
+}
 
-	fmt.Println(completeProfile(p))
+// func completeProfile(name, userName, designation, contactNumber, imageName, imagePath string) Profile {
+// 	//using pointer return type so the changes do not remain local to this specific function, pointers pass the actual address of the type rather than making a copy of it
+// 	return Profile{
+// 		Name:          name,
+// 		Username:      userName,
+// 		Designation:   designation,
+// 		ContactNumber: contactNumber,
+// 		ProfilePicture: ProfilePicture{
+// 			ImageName: imageName,
+// 			ImagePath: imagePath,
+// 		},
+// 	}
+// }
 
-	//taking input from user for modification
-	var num int
-	fmt.Println("Please enter the number in respect with modifications to be made:\n 1.Name\n 2.Username\n 3.Designation\n 4.ContactNumber\n 5.ProfilePicture")
-	fmt.Scanln(&num)
+// method to update profile which takes all the modifications
+func (p *Profile) UpdateProfile(name, userName, designation, contactNumber, imageName, imagePath string) {
+	//taking a pointer here as well so the changes are made to actual profile rather than the local copy of this particular method
+	if name != "" {
+		p.Name = name
+	}
+	if userName != "" {
+		p.Username = userName
+	}
+	if designation != "" {
+		p.Designation = designation
+	}
+	if contactNumber != "" {
+		p.ContactNumber = contactNumber
+	}
+	if imageName != "" {
+		p.ProfilePicture.ImageName = imageName
+	}
+	if imagePath != "" {
+		p.ProfilePicture.ImagePath = imagePath
+	}
 
-	//output after modifications
-	fmt.Println("Profile after modificatoin is: ", p.updateProfile(num))
+}
+
+// func (p Profile) UpdateProfile(name, userName, designation, contactNumber, imageName, imagePath string) {
+// 	//taking a pointer here as well so the changes are made to actual profile rather than the local copy of this particular method
+// 	if name != "" {
+// 		p.Name = name
+// 	}
+// 	if userName != "" {
+// 		p.Username = userName
+// 	}
+// 	if designation != "" {
+// 		p.Designation = designation
+// 	}
+// 	if contactNumber != "" {
+// 		p.ContactNumber = contactNumber
+// 	}
+// 	if imageName != "" {
+// 		p.ProfilePicture.ImageName = imageName
+// 	}
+// 	if imagePath != "" {
+// 		p.ProfilePicture.ImagePath = imagePath
+// 	}
+
+// }
+
+func main() {
+	name := "Kartik"
+	userName := "kartikgarg@infracloud.io"
+	designation := "software engineer"
+	contactNumber := "12345"
+	imageName := "pic1"
+	imagePath := "src/pics"
+
+	//creating a new Profile here
+	completedProfile := completeProfile(name, userName, designation, contactNumber, imageName, imagePath)
+	//fmt.Printf("%p\n", completedProfile)
+	fmt.Println(completedProfile)
+	name = "Garg"
+	//calling method to update the profile
+	completedProfile.UpdateProfile(name, userName, designation, contactNumber, imageName, imagePath)
+	//printing after updatiion
+	fmt.Println(completedProfile)
+	//since we have used pointers, we don't have to have a return statement and changes can be made on the same profile, rahter than a copy of it which is local to that specific method
+
 }
