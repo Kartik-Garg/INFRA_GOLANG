@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"bytes"
+	"encoding/gob"
+	"fmt"
+)
 
 type Profile struct {
 	Name           string
@@ -15,85 +19,100 @@ type ProfilePicture struct {
 	ImagePath string
 }
 
-func completeProfile(p Profile) Profile {
-	return p
+func completeProfile(name, userName, designation, contactNumber, imageName, imagePath string) *Profile {
+	//using pointer return type so the changes do not remain local to this specific function, pointers pass the actual address of the type rather than making a copy of it
+	return &Profile{
+		Name:          name,
+		Username:      userName,
+		Designation:   designation,
+		ContactNumber: contactNumber,
+		ProfilePicture: ProfilePicture{
+			ImageName: imageName,
+			ImagePath: imagePath,
+		},
+	}
 }
 
-func (p Profile) updateProfile(modifications string) Profile {
-	p.Name = modifications
-	return p
-}
+func (p *Profile) UpdateProfile(name, userName, designation, contactNumber, imageName, imagePath string) {
+	//taking a pointer here as well so the changes are made to actual profile rather than the local copy of this particular method
+	if name != "" {
+		p.Name = name
+	}
+	if userName != "" {
+		p.Username = userName
+	}
+	if designation != "" {
+		p.Designation = designation
+	}
+	if contactNumber != "" {
+		p.ContactNumber = contactNumber
+	}
+	if imageName != "" {
+		p.ProfilePicture.ImageName = imageName
+	}
+	if imagePath != "" {
+		p.ProfilePicture.ImagePath = imagePath
+	}
 
-//Task2: crearing interfaces
+}
 
 type ProfileMaker interface {
 	UpdateProfilePicture(ProfilePicture)
 	CheckDuplicateProfile(Profile) bool
 }
 
-func (p ProfilePicture) UpdateProfilePicture(pp ProfilePicture) {
-	p = pp
-	fmt.Println(p)
+func (p *Profile) UpdateProfilePicture(pp ProfilePicture) {
+	//here p profile is the profile used to call this particular method
+	p.ProfilePicture = pp
 }
 
-func (p1 Profile) CheckDuplicateProfile(p2 Profile) bool {
-	if p1 == p2 {
-		return true
+func (p *Profile) CheckDuplicateProfile(profileToCheck Profile) bool {
+	//to make sure that it does not work only on the primitive data types, we can encode it into bytes and then check
+	//can use package gobs.encoder which takes care of data types including structs
+	var profileBuf bytes.Buffer
+	//try encoding it original profile on which method is called into bytes
+	err := gob.NewEncoder(&profileBuf).Encode(p)
+	if err != nil {
+		fmt.Println("Encoding has failed")
+		return false
 	}
-	return false
+	var profileToCompare bytes.Buffer
+	err = gob.NewEncoder(&profileToCompare).Encode(profileToCheck)
+	if err != nil {
+		fmt.Println("Failed to encode")
+		return false
+	}
+
+	return profileBuf.String() == profileToCompare.String()
 }
 
 func main() {
-	p := Profile{
-		Name:          "Kartik",
-		Username:      "kartikgarg",
-		Designation:   "software engineer",
-		ContactNumber: "12345",
-		ProfilePicture: ProfilePicture{
-			ImageName: "pic 1",
-			ImagePath: "/src/go/task1",
-		},
-	}
+	name := "Kartik"
+	userName := "kartikgarg@infracloud.io"
+	designation := "software engineer"
+	contactNumber := "12345"
+	imageName := "pic1"
+	imagePath := "src/pics"
 
-	fmt.Println(completeProfile(p))
+	p1 := completeProfile(name, userName, designation, contactNumber, imageName, imagePath)
 
-	fmt.Println(p.updateProfile("andrew"))
+	fmt.Println(p1)
 
-	pp := ProfilePicture{
-		"image1",
-		"imagePath",
-	}
+	var profileMakerVariable ProfileMaker
 
-	pp.UpdateProfilePicture(pp)
+	profileMakerVariable = p1
 
-	p2 := Profile{
-		"Ananth",
-		"dayakar",
-		"SWE",
-		"123",
-		ProfilePicture{
-			"pic1",
-			"/src",
-		},
-	}
+	profileMakerVariable.UpdateProfilePicture(ProfilePicture{
+		ImageName: "pic2",
+		ImagePath: "newPath",
+	})
 
-	p3 := Profile{
-		Name:          "Kartik",
-		Username:      "kartikgarg",
-		Designation:   "software engineer",
-		ContactNumber: "12345",
-		ProfilePicture: ProfilePicture{
-			ImageName: "pic 1",
-			ImagePath: "/src/go/task1",
-		},
-	}
+	fmt.Println(profileMakerVariable)
 
-	//checking second method of interface
-	fmt.Println(p.CheckDuplicateProfile(p2))
+	//creating a profile to check for duplicacy
+	p2 := completeProfile(name, userName, designation, contactNumber, imageName, imagePath)
 
-	//comparing p3 with p
-	fmt.Println(p.CheckDuplicateProfile(p3))
+	profileMakerVariable = p2
 
-	//comparing p with p
-	fmt.Println(p.CheckDuplicateProfile(p))
+	fmt.Println(profileMakerVariable.CheckDuplicateProfile(*p1))
 }
