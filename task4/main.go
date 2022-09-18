@@ -13,10 +13,11 @@ func iterateOverArray(s []string, chanel1 chan []string) {
 		//send word and empty channel
 		go removeNum(k, chanel2)
 		//receive chanel2 here and add to array
-		words = append(words, <-chanel2)
-
 	}
 
+	for i := 0; i < len(s); i++ {
+		words = append(words, <-chanel2)
+	}
 	//send the words array back to outer func
 	chanel1 <- words
 }
