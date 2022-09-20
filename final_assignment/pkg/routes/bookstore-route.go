@@ -3,11 +3,11 @@ package routes
 import (
 	"final/pkg/controllers"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-var RegisterBookStoreRoutes = func(router *mux.Router) {
-	router.HandleFunc("/book/", controllers.CreateBook).Methods("POST")
-	router.HandleFunc("/book/", controllers.GetBook).Methods("GET")
-	router.HandleFunc("/book/{bookId}", controllers.GetBookById).Methods("GET")
+var RegisterBookStoreRoutes = func(router *gin.Engine) {
+	router.POST("/book/", controllers.CreateBook)
+	router.GET("/book/", controllers.GetBook)
+	router.GET("/book/:ID", controllers.GetBookById)
 }
