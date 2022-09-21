@@ -8,7 +8,7 @@ import (
 
 type BookService interface {
 	GetBookById(ctx context.Context, id string) (*models.Book, error)
-	GetAllBooks(ctx context.Context) (*[]models.Book, error)
+	GetAllBooks(ctx context.Context) ([]*models.Book, error)
 	CreateBook(ctx context.Context, book *models.Book) (*models.Book, error)
 	DeleteBookById(ctx context.Context, id string) error
 }
@@ -27,7 +27,7 @@ func (bs *BookServiceImpl) GetBookById(ctx context.Context, id string) (*models.
 	return bs.booksDB.GetBookById(ctx, id)
 }
 
-func (bs *BookServiceImpl) GetAllBooks(ctx context.Context) (*[]models.Book, error) {
+func (bs *BookServiceImpl) GetAllBooks(ctx context.Context) ([]*models.Book, error) {
 	return bs.booksDB.GetAllBooks(ctx)
 }
 

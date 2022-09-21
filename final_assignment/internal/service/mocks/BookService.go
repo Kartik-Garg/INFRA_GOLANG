@@ -49,15 +49,15 @@ func (_m *BookService) DeleteBookById(ctx context.Context, id string) error {
 }
 
 // GetAllBooks provides a mock function with given fields: ctx
-func (_m *BookService) GetAllBooks(ctx context.Context) (*[]models.Book, error) {
+func (_m *BookService) GetAllBooks(ctx context.Context) ([]*models.Book, error) {
 	ret := _m.Called(ctx)
 
-	var r0 *[]models.Book
-	if rf, ok := ret.Get(0).(func(context.Context) *[]models.Book); ok {
+	var r0 []*models.Book
+	if rf, ok := ret.Get(0).(func(context.Context) []*models.Book); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*[]models.Book)
+			r0 = ret.Get(0).([]*models.Book)
 		}
 	}
 
@@ -92,4 +92,19 @@ func (_m *BookService) GetBookById(ctx context.Context, id string) (*models.Book
 	}
 
 	return r0, r1
+}
+
+type mockConstructorTestingTNewBooksService interface {
+	mock.TestingT
+	Cleanup(func())
+}
+
+// NewBookService creates a new instance of BookService. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+func NewBooksService(t mockConstructorTestingTNewBooksService) *BookService {
+	mock := &BookService{}
+	mock.Mock.Test(t)
+
+	t.Cleanup(func() { mock.AssertExpectations(t) })
+
+	return mock
 }

@@ -42,13 +42,13 @@ func (mysqlDB *MYSQLDB) CreateBook(ctx context.Context, book *models.Book) (*mod
 	return book, nil
 }
 
-func (mysqlDB *MYSQLDB) GetAllBooks(ctx context.Context) (*[]models.Book, error) {
-	var books []models.Book
+func (mysqlDB *MYSQLDB) GetAllBooks(ctx context.Context) ([]*models.Book, error) {
+	books := []*models.Book{}
 	res := mysqlDB.Find(&books)
 	if res.Error != nil {
 		return nil, res.Error
 	}
-	return &books, nil
+	return books, nil
 }
 
 func (mysqlDB *MYSQLDB) GetBookById(ctx context.Context, id string) (*models.Book, error) {
