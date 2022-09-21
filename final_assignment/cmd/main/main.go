@@ -4,6 +4,7 @@ import (
 	"final/internal/controllers"
 	"final/internal/db/mysql"
 	"final/internal/routes"
+	"final/internal/service"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -12,12 +13,7 @@ import (
 func main() {
 
 	router := gin.Default()
-
-	// routes.RegisterBookStoreRoutes(router)
-
-	// router.Run("localhost:9010")
-
-	//lets start with db
+	//lets start with db, we can follow a bottom-up approach for easy understanding
 
 	db, err := mysql.NewMYSQLDB()
 	if err != nil {
@@ -26,7 +22,9 @@ func main() {
 
 	db.Migrate()
 
-	booksController := controllers.NewBooksController(db)
+	booksSvc := service.NewBookService(db)
+
+	booksController := controllers.NewBooksController(booksSvc)
 
 	routes.RegisterBookStoreRoutes(router, booksController)
 

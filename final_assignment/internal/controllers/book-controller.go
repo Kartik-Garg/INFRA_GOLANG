@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"final/internal/db"
 	"final/internal/models"
+	"final/internal/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,12 +16,12 @@ type ControllerInterface interface {
 }
 
 type BooksDBimpl struct {
-	booksDB db.BooksDB
+	booksSvc service.BookService
 }
 
-func NewBooksController(booksDB db.BooksDB) ControllerInterface {
+func NewBooksController(booksSvc service.BookService) ControllerInterface {
 	return &BooksDBimpl{
-		booksDB,
+		booksSvc,
 	}
 }
 
@@ -32,7 +32,7 @@ func (b *BooksDBimpl) CreateBook(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "bad request"})
 	}
 
-	res, err := b.booksDB.CreateBook(c, &book)
+	res, err := b.booksSvc.CreateBook(c, &book)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "not able to create"})
 		return
@@ -42,7 +42,7 @@ func (b *BooksDBimpl) CreateBook(c *gin.Context) {
 }
 
 func (b *BooksDBimpl) GetAllBooks(c *gin.Context) {
-	books, err := b.booksDB.GetAllBooks(c)
+	books, err := b.booksSvc.GetAllBooks(c)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "could not get books"})
@@ -54,7 +54,7 @@ func (b *BooksDBimpl) GetAllBooks(c *gin.Context) {
 
 func (b *BooksDBimpl) GetBookById(c *gin.Context) {
 	id := c.Params.ByName("ID")
-	book, err := b.booksDB.GetBookById(c, id)
+	book, err := b.booksSvc.GetBookById(c, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "can not get the book"})
 		return
@@ -64,7 +64,7 @@ func (b *BooksDBimpl) GetBookById(c *gin.Context) {
 
 func (b *BooksDBimpl) DeleteBookById(c *gin.Context) {
 	id := c.Params.ByName("ID")
-	err := b.booksDB.DeleteBookById(c, id)
+	err := b.booksSvc.DeleteBookById(c, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "could not delete"})
 		return
