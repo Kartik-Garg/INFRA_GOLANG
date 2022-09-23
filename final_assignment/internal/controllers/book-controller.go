@@ -69,5 +69,5 @@ func (b *BooksDBimpl) DeleteBookById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "could not delete"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{"message": "The given book was deleted successfully"})
 }
