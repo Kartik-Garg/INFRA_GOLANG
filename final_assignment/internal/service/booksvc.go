@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"final/internal/db"
 	"final/internal/models"
+	"final/pkg/db"
 )
 
 type BookService interface {

@@ -2,9 +2,9 @@ package main
 
 import (
 	"final/internal/controllers"
-	"final/internal/db/mysql"
 	"final/internal/routes"
 	"final/internal/service"
+	"final/pkg/db/mysql"
 	"log"
 
 	"github.com/gin-gonic/gin"
